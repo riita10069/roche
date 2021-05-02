@@ -57,6 +57,10 @@ func main() {
 		)
 
 	cobra.OnInitialize(func() {
+		_, err := os.Stat(tomlFile)
+		if err != nil {
+			roche_gen_toml.MakeRocheToml()
+		}
 
 		viper.SetConfigFile(tomlFile)
 

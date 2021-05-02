@@ -3,7 +3,6 @@ package roche_gen_toml
 import (
 	"fmt"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/riita10069/roche/pkg/roche/config"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 )

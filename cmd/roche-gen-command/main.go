@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	_ "github.com/riita10069/roche/cmd/roche-gen-command/template"
 	"github.com/izumin5210/grapi/pkg/gencmd"
+	_ "github.com/riita10069/roche/cmd/roche-gen-command/template"
 )
 
 func main() {

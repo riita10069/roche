@@ -1,0 +1,8 @@
+ModuleName    = "github.com/riita10069/roche"
+ServerDir     = "generated/server"
+UsecaseDir    = "generated/usecase"
+DomainRepoDir = "generated/domain/repository"
+EntityDir     = "generated/domain/entity"
+RepoDir       = "generated/infra/repository"
+ProtoDir      = "testdata/proto"
+PbGoDir       = "testdata"

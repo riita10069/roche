@@ -3,6 +3,7 @@ module github.com/riita10069/roche
 go 1.13
 
 require (
+	github.com/dave/jennifer v1.4.1
 	github.com/google/wire v0.5.0
 	github.com/izumin5210/clig v0.3.1
 	github.com/izumin5210/grapi v0.5.0

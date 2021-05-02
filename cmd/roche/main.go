@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	roche_gen_scaffold "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-scaffold"
+	roche_gen_toml "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-toml"
 	roche_test "github.com/riita10069/roche/pkg/roche/cmd/roche-test"
 	"github.com/riita10069/roche/pkg/roche/config"
 	"github.com/spf13/cobra"
@@ -52,6 +53,7 @@ func main() {
 	command.AddCommand(
 		roche_test.NewTestCommand(grapictx, &cnf),
 		roche_gen_scaffold.NewScaffoldCommand(grapictx, &cnf),
+		roche_gen_toml.NewTomlCommand(grapictx),
 		)
 
 	cobra.OnInitialize(func() {

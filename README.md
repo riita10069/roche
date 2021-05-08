@@ -1,5 +1,7 @@
 ## roche
 
+It is still under development, so please do not use it. We plan to release v.1.0.0 in the summer.
+
 roche is a web framework optimized for microservice architecture using go.
 It prioritizes schema-first and quick development over lightweight.
 It is currently in the development concept stage and should not be used in production.
@@ -36,6 +38,6 @@ In a microservices architecture, each service pulls together as if it has univer
 
 ## core maintainers
 
-@riita10069
-@hourglasshoro
-@ffjlabo
+<a href="https://github.com/riita10069">@riita10069</a>
+<a href="https://github.com/hourglasshoro">@hourglasshoro</a>
+<a href="https://github.com/ffjlabo">@ffjlabo</a>

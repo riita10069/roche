@@ -38,6 +38,6 @@ In a microservices architecture, each service pulls together as if it has univer
 
 ## core maintainers
 
-<a href="https://github.com/riita10069">@riita10069</a>
-<a href="https://github.com/hourglasshoro">@hourglasshoro</a>
-<a href="https://github.com/ffjlabo">@ffjlabo</a>
+- <a href="https://github.com/riita10069">@riita10069</a>
+- <a href="https://github.com/hourglasshoro">@hourglasshoro</a>
+- <a href="https://github.com/ffjlabo">@ffjlabo</a>

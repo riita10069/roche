@@ -1,7 +1,6 @@
 package gen_scaffold
 
 import (
-	"fmt"
 	. "github.com/dave/jennifer/jen"
 	rocheAst "github.com/riita10069/roche/pkg/roche/ast"
 	"github.com/riita10069/roche/pkg/roche/config"
@@ -25,8 +24,8 @@ func GenerateUsecase(structName string, targetStruct *ast.StructType, cnf *confi
 	repositoryFile.Type().Id("I" + structName).Interface(
 		Id("GetList").Params().Params(Index().Id(structName), Error()),
 		Id("GetByID").Params(Id("id").Int64()).Params(Id("*" + structName), Error()),
-		Id("Create").Params(createSignature...).Params(Id(structName), Error()),
-		Id("Update").Params(updateSignature...).Params(Id(structName), Error()),
+		Id("Create").Params(createSignature...).Params(Id("*" + structName), Error()),
+		Id("Update").Params(updateSignature...).Params(Id("*" + structName), Error()),
 		Id("Delete").Params().Error(),
 	)
 
@@ -138,9 +137,6 @@ func GenerateUsecase(structName string, targetStruct *ast.StructType, cnf *confi
 			Return(Id("nil"), Err()),
 		),
 
-		Return(Id("updated"), Err()),
+		Return(Err()),
 	)
-
-	fmt.Printf("%#v", usecaseFile)
-
 }

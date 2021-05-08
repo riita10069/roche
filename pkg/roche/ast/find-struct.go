@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"fmt"
 	"github.com/dave/jennifer/jen"
 	"github.com/riita10069/roche/pkg/roche/config"
 	"github.com/riita10069/roche/pkg/util"
@@ -9,16 +10,15 @@ import (
 	"go/token"
 )
 
-const PbGoFilePath = "./testdata/test.pb.go"
-
 func FindStruct(structName string, cnf *config.Config) *ast.StructType {
 	filePath := cnf.PbGoDir + "/" + util.CamelToSnake(structName) + ".pb.go"
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, filePath, nil, parser.Mode(0))
 	if err != nil {
+		fmt.Println("cannot parse file, filepath is ", filePath)
+		fmt.Println(err.Error())
 		return nil
 	}
-
 
 	structASTMap := map[string]*ast.StructType{}
 	getAstHash(f, structASTMap)

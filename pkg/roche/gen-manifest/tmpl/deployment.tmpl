@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Name }}-deployment
+  namespace: {{ .Name }}-ns
+  labels:
+    app: {{ .Name }}-label
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+    app: {{ .Name }}-label
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Name }}-label
+    spec:
+      containers:
+        - name: {{ .Name }}-container
+          image: {{ .Registry }}/{{ .Name }}:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: "Asia/Tokyo"
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Name }}-secret
+                  key: secret
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+                cpu: 2
+                memory: 2048m
+            requests:
+                cpu: 2
+            memory: 2048m
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /health

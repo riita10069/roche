@@ -24,7 +24,6 @@ In a microservices architecture, each service pulls together as if it has univer
 
 `go get github.com/riita10069/roche/cmd/roche`
 
-
 ## List of Command
 
 `roche init .`
@@ -35,4 +34,8 @@ In a microservices architecture, each service pulls together as if it has univer
 
 `roche protoc`
 
+## core maintainers
 
+@riita10069
+@hourglasshoro
+@ffjlabo

@@ -3,10 +3,15 @@ package ast
 import (
 	"fmt"
 	"go/ast"
+	"go/parser"
 	"go/token"
 )
 
-func PrintFile(f ast.File)  {
+func PrintFile(filepath string) {
+	f, err := parser.ParseFile(token.NewFileSet(), filepath, nil, parser.Mode(0))
+	if err != nil {
+		fmt.Errorf("cannot parse" + filepath + "    **debug ast.printfile")
+	}
 	for _, d := range f.Decls {
 		ast.Print(token.NewFileSet(), d)
 		fmt.Println()

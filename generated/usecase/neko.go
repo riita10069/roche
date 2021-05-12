@@ -23,7 +23,7 @@ func (u Neko) GetByID(id int64) (*entity.Neko, error) {
 	}
 	return usecase, err
 }
-func (u Neko) Create(NekoId string, Name string, Size string) (*entity.Neko, error) {
+func (u Neko) Create(neko_id string, name string, size string) (*entity.Neko, error) {
 	entity := &entity.Neko{
 		Name:   Name,
 		NekoId: NekoId,
@@ -35,7 +35,7 @@ func (u Neko) Create(NekoId string, Name string, Size string) (*entity.Neko, err
 	}
 	return created, err
 }
-func (u Neko) Update(NekoId string, Name string, Size string, id int64) (*entity.Neko, error) {
+func (u Neko) Update(neko_id string, name string, size string, id int64) (*entity.Neko, error) {
 	entity, err := u.NekoRepo.GetByID(id)
 	if err != nil {
 		return nil, err

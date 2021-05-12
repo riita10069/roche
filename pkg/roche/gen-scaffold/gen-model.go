@@ -3,6 +3,7 @@ package gen_scaffold
 import (
 	"github.com/dave/jennifer/jen"
 	"github.com/riita10069/roche/pkg/roche/config"
+	"github.com/riita10069/roche/pkg/roche/file"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/riita10069/roche/pkg/util/slice"
 	"go/ast"
@@ -10,7 +11,7 @@ import (
 
 func GenerateModel(structName string, structAst *ast.StructType, cnf *config.Config) error {
 	f := jen.NewFile("model")
-	defer f.Save(cnf.InfraModelDir + "/" + util.CamelToSnake(structName) + ".go")
+	defer file.JenniferToFile(f, cnf.InfraModelDir + "/" + util.CamelToSnake(structName) + ".go")
 
 	// create fields of struct
 	var codes []jen.Code

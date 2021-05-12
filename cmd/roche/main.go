@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	roche_custom_method "github.com/riita10069/roche/pkg/roche/cmd/roche-custom-method"
 	roche_gen_scaffold "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-scaffold"
 	roche_gen_toml "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-toml"
 	roche_manifest "github.com/riita10069/roche/pkg/roche/cmd/roche-manifest"
@@ -56,6 +57,7 @@ func main() {
 		roche_gen_scaffold.NewScaffoldCommand(grapictx, &cnf),
 		roche_gen_toml.NewTomlCommand(grapictx),
 		roche_manifest.NewManifestCommand(grapictx, &cnf),
+		roche_custom_method.NewCustomMethodCommand(grapictx, &cnf),
 		)
 
 	cobra.OnInitialize(func() {

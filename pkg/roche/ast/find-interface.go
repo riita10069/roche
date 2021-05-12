@@ -1,16 +1,12 @@
 package ast
 
 import (
-	"github.com/riita10069/roche/pkg/roche/config"
-	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
 	"go/parser"
 	"go/token"
 )
 
-func FindInterface(name string, cnf *config.Config) *ast.InterfaceType {
-	interfaceName := name + "ServiceServer"
-	filePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+func FindInterface(interfaceName string, filePath string) *ast.InterfaceType {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, filePath, nil, parser.Mode(0))
 	if err != nil {

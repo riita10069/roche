@@ -3,15 +3,13 @@ package ast
 import (
 	"fmt"
 	"github.com/dave/jennifer/jen"
-	"github.com/riita10069/roche/pkg/roche/config"
 	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
 	"go/parser"
 	"go/token"
 )
 
-func FindStruct(structName string, cnf *config.Config) *ast.StructType {
-	filePath := cnf.PbGoDir + "/" + util.CamelToSnake(structName) + ".pb.go"
+func FindStruct(structName string, filePath string) *ast.StructType {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, filePath, nil, parser.Mode(0))
 	if err != nil {
@@ -89,7 +87,7 @@ func GetPropertyByStructAst(structAst *ast.StructType) ([]string, []string) {
 func GetPostSignature(property []string, propertyType []string) []jen.Code {
 	var postSignature []jen.Code
 	for i := range property {
-		postSignature = append(postSignature, jen.Id(property[i]).Id(propertyType[i]))
+		postSignature = append(postSignature, jen.Id(util.CamelToSnake(property[i])).Id(propertyType[i]))
 	}
 	return postSignature
 }

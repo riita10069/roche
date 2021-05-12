@@ -31,7 +31,6 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			if !ctx.IsInsideApp() {
 				return errors.New("roche command should be execute inside a roche application directory")
 			}
@@ -39,9 +38,10 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 				return errors.New("For using this roche command, please run following command\nroche toml\nAnd please edit roche.toml According to your project")
 			}
 			name := args[0]
-			targetStruct := ast.FindStruct(name, cnf)
+			pbGoFilePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go, but not found" + name + " struct")
+				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
 			}
 			if err := gen_scaffold.GenerateEntity(name, targetStruct, cnf); err != nil {
 				return err
@@ -63,9 +63,10 @@ func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comma
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name := args[0]
-			targetStruct := ast.FindStruct(name, cnf)
+			pbGoFilePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go, but not found" + name + " struct")
+				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
 			}
 			err := gen_scaffold.GenerateModel(name, targetStruct, cnf)
 			if err != nil {

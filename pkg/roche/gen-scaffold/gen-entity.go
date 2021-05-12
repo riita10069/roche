@@ -1,9 +1,9 @@
 package gen_scaffold
 
 import (
-	"fmt"
 	"github.com/dave/jennifer/jen"
 	"github.com/riita10069/roche/pkg/roche/config"
+	"github.com/riita10069/roche/pkg/roche/file"
 	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
 )
@@ -11,7 +11,7 @@ import (
 
 func GenerateEntity(structName string, structAst *ast.StructType, cnf *config.Config) error {
 	f := jen.NewFile("entity")
-	defer f.Save(cnf.EntityDir + "/" + util.CamelToSnake(structName) + ".go")
+	defer file.JenniferToFile(f, cnf.EntityDir + "/" + util.CamelToSnake(structName) + ".go")
 
 	// create fields of struct
 	var codes []jen.Code
@@ -44,7 +44,6 @@ func GenerateEntity(structName string, structAst *ast.StructType, cnf *config.Co
 	// create struct
 	f.Type().Id(structName).Struct(codes...)
 
-	fmt.Printf("%#v", f)
 
 	return nil
 }

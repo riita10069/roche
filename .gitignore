@@ -19,3 +19,8 @@
 /coverage.txt
 /bin
 /dist
+
+
+.idea
+.vscode
+generated

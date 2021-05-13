@@ -1,4 +1,4 @@
-## roche
+# ![roche](./roche_2nd.png)
 
 It is still under development, so please do not use it. We plan to release v.1.0.0 in the summer.
 
@@ -26,15 +26,26 @@ In a microservices architecture, each service pulls together as if it has univer
 
 `go get github.com/riita10069/roche/cmd/roche`
 
-## List of Command
+## Getting Started
 
 `roche init .`
+To Initialize project like create-react-app
 
-`roche g scaffold-service service_name`
+`roche toml`
+Generate roche.toml which is needed roche command.
+
+`roche g scaffold-service NAME`
+Generate .proto and server
+
+`roche scaffold all NAME`
+Generate CRUD template for NAME service
+
+`roche manifest app APPNAME`
+Generate k8s manifest template, APPNAME is app name.
 
 `roche server`
+Run api server
 
-`roche protoc`
 
 ## core maintainers
 

@@ -5,6 +5,7 @@ import (
 	"github.com/izumin5210/grapi/pkg/grapicmd"
 	"github.com/riita10069/roche/pkg/roche/ast"
 	"github.com/riita10069/roche/pkg/roche/config"
+	"github.com/riita10069/roche/pkg/roche/file"
 	gen_scaffold "github.com/riita10069/roche/pkg/roche/gen-scaffold"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/spf13/cobra"
@@ -38,17 +39,16 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 				return errors.New("For using this roche command, please run following command\nroche toml\nAnd please edit roche.toml According to your project")
 			}
 			name := args[0]
-			pbGoFilePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+			pbGoFilePath := cnf.GetPbGoFilePath(name)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
+				return errors.New("found "+ pbGoFilePath + " but not found" + name + " struct")
 			}
-			if err := gen_scaffold.GenerateEntity(name, targetStruct, cnf); err != nil {
-				return err
-			}
-			gen_scaffold.GenerateUsecase(name, targetStruct, cnf)
-
-
+			entityFile := gen_scaffold.GenerateEntity(name, targetStruct)
+			file.JenniferToFile(entityFile, cnf.GetEntityFilePath(name))
+			usecaseFile, domainRepositoryFile := gen_scaffold.GenerateUsecase(name, targetStruct)
+			file.JenniferToFile(usecaseFile, cnf.GetUsecaseFilePath(name))
+			file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
 			return nil
 		},
 	}

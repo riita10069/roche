@@ -46,6 +46,23 @@ Generate k8s manifest template, APPNAME is app name.
 `roche server`
 Run api server
 
+## if you want to use roche server
+Currently, this feature is not supported. Sorry.
+```go
+func Run() error {
++     defer roche.Close()
++
+      s := grapiserver.New(
++               rocheserver.WithDefaultLogger(),
+-               grapiserver.WithDefaultLogger(),
+                grapiserver.WithServers(
+                // TODO: Add server implementations
+  	),
+        )
+        return s.Serve()
+}
+```
+
 
 ## core maintainers
 

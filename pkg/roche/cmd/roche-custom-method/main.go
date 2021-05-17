@@ -47,7 +47,6 @@ func NewCustomMethodCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comman
 
 			for _, customMethod := range customMethodList {
 				file.Append("\n" + customMethod, handlerFilePath)
-
 			}
 			return nil
 		},

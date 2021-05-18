@@ -2,8 +2,8 @@ package roche_manifest
 
 import (
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/riita10069/roche/pkg/roche/config"
-	gen_manifest "github.com/riita10069/roche/pkg/roche/gen-manifest"
+	"github.com/riita10069/roche/pkg/rochectl/config"
+	gen_manifest "github.com/riita10069/roche/pkg/rochectl/gen-manifest"
 	"github.com/spf13/cobra"
 )
 

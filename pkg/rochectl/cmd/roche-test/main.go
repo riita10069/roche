@@ -2,7 +2,7 @@ package roche_test
 
 import (
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/riita10069/roche/pkg/roche/config"
+	"github.com/riita10069/roche/pkg/rochectl/config"
 	"github.com/spf13/cobra"
 )
 

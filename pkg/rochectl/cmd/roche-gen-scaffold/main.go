@@ -3,10 +3,10 @@ package roche_gen_scaffold
 import (
 	"errors"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/riita10069/roche/pkg/roche/ast"
-	"github.com/riita10069/roche/pkg/roche/config"
-	"github.com/riita10069/roche/pkg/roche/file"
-	gen_scaffold "github.com/riita10069/roche/pkg/roche/gen-scaffold"
+	"github.com/riita10069/roche/pkg/rochectl/ast"
+	"github.com/riita10069/roche/pkg/rochectl/config"
+	"github.com/riita10069/roche/pkg/rochectl/file"
+	gen_scaffold "github.com/riita10069/roche/pkg/rochectl/gen-scaffold"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -33,10 +33,10 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if !ctx.IsInsideApp() {
-				return errors.New("roche command should be execute inside a roche application directory")
+				return errors.New("rochectl command should be execute inside a rochectl application directory")
 			}
 			if !cnf.FindToml {
-				return errors.New("For using this roche command, please run following command\nroche toml\nAnd please edit roche.toml According to your project")
+				return errors.New("For using this rochectl command, please run following command\nrochectl toml\nAnd please edit rochectl.toml According to your project")
 			}
 			name := args[0]
 			pbGoFilePath := cnf.GetPbGoFilePath(name)

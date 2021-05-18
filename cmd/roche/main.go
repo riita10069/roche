@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	roche_custom_method "github.com/riita10069/roche/pkg/roche/cmd/roche-custom-method"
-	roche_gen_scaffold "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-scaffold"
-	roche_gen_toml "github.com/riita10069/roche/pkg/roche/cmd/roche-gen-toml"
-	roche_manifest "github.com/riita10069/roche/pkg/roche/cmd/roche-manifest"
-	roche_test "github.com/riita10069/roche/pkg/roche/cmd/roche-test"
-	"github.com/riita10069/roche/pkg/roche/config"
+	roche_custom_method "github.com/riita10069/roche/pkg/rochectl/cmd/roche-custom-method"
+	roche_gen_scaffold "github.com/riita10069/roche/pkg/rochectl/cmd/roche-gen-scaffold"
+	roche_gen_toml "github.com/riita10069/roche/pkg/rochectl/cmd/roche-gen-toml"
+	roche_manifest "github.com/riita10069/roche/pkg/rochectl/cmd/roche-manifest"
+	roche_test "github.com/riita10069/roche/pkg/rochectl/cmd/roche-test"
+	"github.com/riita10069/roche/pkg/rochectl/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"

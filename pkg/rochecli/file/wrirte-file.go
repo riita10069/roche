@@ -60,6 +60,7 @@ func JenniferToFile(f *jen.File, filename string) {
 	err := f.Render(buf)
 	if err != nil {
 		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 	CreateAndWrite(buf.String(), filename)
 

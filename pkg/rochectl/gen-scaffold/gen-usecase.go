@@ -2,7 +2,7 @@ package gen_scaffold
 
 import (
 	. "github.com/dave/jennifer/jen"
-	rocheAst "github.com/riita10069/roche/pkg/roche/ast"
+	rocheAst "github.com/riita10069/roche/pkg/rochectl/ast"
 	"go/ast"
 )
 

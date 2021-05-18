@@ -3,10 +3,10 @@ package roche_custom_method
 import (
 	"errors"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/riita10069/roche/pkg/roche/ast"
-	"github.com/riita10069/roche/pkg/roche/config"
-	custom_method "github.com/riita10069/roche/pkg/roche/custom-method"
-	"github.com/riita10069/roche/pkg/roche/file"
+	"github.com/riita10069/roche/pkg/rochectl/ast"
+	"github.com/riita10069/roche/pkg/rochectl/config"
+	custom_method "github.com/riita10069/roche/pkg/rochectl/custom-method"
+	"github.com/riita10069/roche/pkg/rochectl/file"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/spf13/cobra"
 )

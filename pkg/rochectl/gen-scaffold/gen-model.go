@@ -2,8 +2,8 @@ package gen_scaffold
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/riita10069/roche/pkg/roche/config"
-	"github.com/riita10069/roche/pkg/roche/file"
+	"github.com/riita10069/roche/pkg/rochectl/config"
+	"github.com/riita10069/roche/pkg/rochectl/file"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/riita10069/roche/pkg/util/slice"
 	"go/ast"

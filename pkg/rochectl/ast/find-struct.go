@@ -53,8 +53,8 @@ func getAstHash(f *ast.File, structASTMap map[string]*ast.StructType) {
 }
 
 func GetPropertyByStructAst(structAst *ast.StructType) ([]string, []string) {
-	var property []string
-	var propertyType []string
+	var properties []string
+	var propertiesType []string
 
 	for _, field := range structAst.Fields.List {
 		for _, nameIdent := range field.Names {
@@ -70,18 +70,18 @@ func GetPropertyByStructAst(structAst *ast.StructType) ([]string, []string) {
 				if xIdent.Name == "protoimpl" {
 					continue
 				}
-				property = append(property, nameIdent.Name)
-				propertyType = append(propertyType, xIdent.Name)
+				properties = append(properties, nameIdent.Name)
+				propertiesType = append(propertiesType, xIdent.Name)
 
 			// 組み込みまたは同パッケージ内の型を利用している場合
 			case *ast.Ident:
 				ident, _ := field.Type.(*ast.Ident)
-				property = append(property, nameIdent.Name)
-				propertyType = append(propertyType, ident.Name)
+				properties = append(properties, nameIdent.Name)
+				propertiesType = append(propertiesType, ident.Name)
 			}
 		}
 	}
-	return property, propertyType
+	return properties, propertiesType
 }
 
 func GetPostSignature(property []string, propertyType []string) []jen.Code {

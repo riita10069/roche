@@ -27,7 +27,7 @@ func NewCustomMethodCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comman
 			}
 
 			name := args[0]
-			pbGoFilePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+			pbGoFilePath := cnf.GetPbGoFilePath(name)
 			wantToFindInterfaceName := name + "ServiceServer"
 			targetInterface := ast.FindInterface(wantToFindInterfaceName, pbGoFilePath)
 			if targetInterface == nil {

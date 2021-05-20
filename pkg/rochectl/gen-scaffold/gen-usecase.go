@@ -7,10 +7,10 @@ import (
 )
 
 func GenerateUsecase(structName string, targetStruct *ast.StructType) (*File, *File) {
-	property, propertyType := rocheAst.GetPropertyByStructAst(targetStruct)
-	createSignature := rocheAst.GetPostSignature(property, propertyType)
+	properties, propertiesType := rocheAst.GetPropertyByStructAst(targetStruct)
+	createSignature := rocheAst.GetPostSignature(properties, propertiesType)
 	updateSignature := append(createSignature, Id("id").Int64())
-	dict := GenDict(property, property)
+	dict := GenDict(properties, properties)
 
 	usecaseFile := NewFile("usecase")
 	repositoryFile := NewFile("repository")
@@ -25,13 +25,13 @@ func GenerateUsecase(structName string, targetStruct *ast.StructType) (*File, *F
 		Id("Delete").Params().Error(),
 	)
 
-	usecaseFile.Type().Id(structName + "Usecase").Struct(
+	usecaseFile.Type().Id(structName).Struct(
 		Id(structName + "Repo").Id("repository.I" + structName),
 	)
 
 	// NewStructNameUsecase Constructor
 	usecaseFile.Func().Id("New" + structName + "Usecase").Params(Id("repo").Id("repository.I" + structName)).Id("repository.I" + structName).Block(
-		Return(Op("&").Id(structName + "Usecase").Values(Dict{
+		Return(Op("&").Id(structName).Values(Dict{
 			Id(structName + "Repo"):	Id("repo"),
 		})),
 	)

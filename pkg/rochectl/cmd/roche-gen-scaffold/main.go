@@ -33,26 +33,40 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if !ctx.IsInsideApp() {
-				return errors.New("rochectl command should be execute inside a rochectl application directory")
+				return errors.New("roche command should be execute inside a rochectl application directory")
 			}
 			if !cnf.FindToml {
-				return errors.New("For using this rochectl command, please run following command\nrochectl toml\nAnd please edit rochectl.toml According to your project")
+				return errors.New("For using this roche command, please run following command\nrochectl toml\nAnd please edit rochectl.toml According to your project")
 			}
-			name := args[0]
-			pbGoFilePath := cnf.GetPbGoFilePath(name)
+			name := util.SnakeToUpperCamel(args[0])
+			pfile, err := cmd.PersistentFlags().GetString("pfile")
+			if err != nil {
+				return err
+			}
+			if pfile == "default" {
+				pfile = name
+			}
+			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
 				return errors.New("found "+ pbGoFilePath + " but not found" + name + " struct")
 			}
 			entityFile := gen_scaffold.GenerateEntity(name, targetStruct)
 			file.JenniferToFile(entityFile, cnf.GetEntityFilePath(name))
-			usecaseFile, domainRepositoryFile := gen_scaffold.GenerateUsecase(name, targetStruct)
+			domainRepositoryFile, usecaseFile := gen_scaffold.GenerateUsecase(name, targetStruct)
 			file.JenniferToFile(usecaseFile, cnf.GetUsecaseFilePath(name))
 			file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
-			return nil
+			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct)
+			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
+			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
+			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
+
+			return err
 		},
 	}
-	return allCmd
+	allCmd.PersistentFlags().StringP("pfile", "f", "default", "proto file name")
+
+return allCmd
 }
 
 func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
@@ -62,18 +76,31 @@ func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comma
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			name := args[0]
-			pbGoFilePath := cnf.PbGoDir + "/" + util.CamelToSnake(name) + ".pb.go"
+			if !ctx.IsInsideApp() {
+				return errors.New("roche command should be execute inside a rochectl application directory")
+			}
+			if !cnf.FindToml {
+				return errors.New("For using this roche command, please run following command\nrochectl toml\nAnd please edit rochectl.toml According to your project")
+			}
+			name := util.SnakeToUpperCamel(args[0])
+			pfile, err := cmd.PersistentFlags().GetString("pfile")
+			if err != nil {
+				return err
+			}
+			if pfile == "default" {
+				pfile = name
+			}
+			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
 				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
 			}
-			err := gen_scaffold.GenerateModel(name, targetStruct, cnf)
-			if err != nil {
-				return err
-			}
-			return nil
+			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
+			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
+			return err
 		},
 	}
+	modelCmd.PersistentFlags().StringP("pfile", "f", "default", "proto file name")
+
 	return modelCmd
 }

@@ -3,15 +3,18 @@ package gen_scaffold
 import (
 	. "github.com/dave/jennifer/jen"
 	rocheAst "github.com/riita10069/roche/pkg/rochectl/ast"
+	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
 )
 
-func GenerateRepository(name string, targetStruct *ast.StructType)  {
-	properties, propertyType := rocheAst.GetPropertyByStructAst(targetStruct)
-	createSignature := rocheAst.GetPostSignature(properties, propertyType)
-	updateSignature := append(createSignature, Id("id").Int64())
+func GenerateRepository(name string, targetStruct *ast.StructType) *File {
+	properties, propertiesType := rocheAst.GetPropertyByStructAst(targetStruct)
+	createArgument := rocheAst.GetPostArgument(properties, propertiesType)
+	updateArgument := append(createArgument, Id("id").Int64())
 	dict := GenDict(properties, properties)
 	scanArgument := propertyToScan(properties)
+	toExecForCreate := propertyToExecForCreate(properties)
+	toExecForUpdate := propertyToExecForUpdate(properties)
 
 	infraRepoFile := NewFile("repository")
 
@@ -45,7 +48,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 		For(
 			Id("rows").Dot("Next").Call(),
 		).Block(
-			Var().Params(updateSignature...),
+			Var().Params(Id(getVarArgumentForScan(properties, propertiesType) + "id int64")),
 			Err().Op(":=").Id("rows").Dot("Scan").Call(scanArgument...),
 			If(
 				Err().Op("!=").Nil(),
@@ -76,8 +79,8 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 		Defer().Id("stmt").Dot("Close").Call(),
 
 
-		Var().Params(updateSignature...),
-		List(Id("rows"), Id("err")).Op(":=").Id("prep").Dot("QueryRow").Call(Id("1")).Id("Scan").Call(scanArgument...),
+		Var().Params(Id(getVarArgumentForScan(properties, propertiesType) + "id int64")),
+		List(Id("rows"), Id("err")).Op(":=").Id("prep").Dot("QueryRow").Call(Id("1")).Dot("Scan").Call(scanArgument...),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -91,7 +94,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 	)
 
 	// Create
-	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Create").Params(createSignature...).Params(Id("*entity." + name), Error()).Block(
+	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Create").Params(createArgument...).Params(Id("*entity." + name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Create())),
 		If(
 			Err().Op("!=").Nil(),
@@ -100,7 +103,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 		),
 		Defer().Id("stmt").Dot("Close").Call(),
 
-		List(Id("result"), Id("err")).Op(":=").Id("stmt").Dot("Exec").Call(createSignature...),
+		List(Id("result"), Id("err")).Op(":=").Id("stmt").Dot("Exec").Call(toExecForCreate...),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -120,7 +123,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 	)
 
 	// Update
-	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Update").Params(updateSignature...).Params(Id("*entity." +name), Error()).Block(
+	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Update").Params(updateArgument...).Params(Id("*entity." +name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Update())),
 		If(
 			Err().Op("!=").Nil(),
@@ -129,7 +132,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 		),
 		Defer().Id("stmt").Dot("Close").Call(),
 
-		List(Id("result"), Id("err")).Op(":=").Id("stmt").Dot("Exec").Call(updateSignature...),
+		List(Id("result"), Id("err")).Op(":=").Id("stmt").Dot("Exec").Call(toExecForUpdate...),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -168,35 +171,64 @@ func GenerateRepository(name string, targetStruct *ast.StructType)  {
 		Return(Err()),
 	)
 
+	return infraRepoFile
+
+}
+
+func propertyToExecForUpdate(properties []string) []Code {
+	var execForUpdate []Code
+	execForUpdate = append(execForUpdate, Id("id"))
+	for _, v := range properties {
+		execForUpdate = append(execForUpdate, Id(util.SnakeToLowerCamel(util.CamelToSnake(v))))
+	}
+	return execForUpdate
+}
+
+
+func propertyToExecForCreate(properties []string) []Code {
+	var execForCreate []Code
+	for _, v := range properties {
+		execForCreate = append(execForCreate, Id(util.SnakeToLowerCamel(util.CamelToSnake(v))))
+	}
+	return execForCreate
 }
 
 func propertyToScan(properties []string) []Code {
 	var scanSignature []Code
 	scanSignature = append(scanSignature, Id("&id"))
 	for _, v := range properties {
-		scanSignature = append(scanSignature, Id("&" + v))
+		scanSignature = append(scanSignature, Id("&" + util.SnakeToLowerCamel(util.CamelToSnake(v))))
 	}
 	return scanSignature
 }
 
+func getVarArgumentForScan(property []string, propertyType []string) string {
+	var postSignature string
+	for i := range property {
+		postSignature += util.CamelToSnake(util.SnakeToLowerCamel(util.CamelToSnake(property[i]))) + " " + (propertyType[i])
+		postSignature += ";"
+	}
+	return postSignature
+}
+
 func FindAll() string {
-	return "----------------find all-----------------"
+	return "\"----------------find all-----------------\""
 }
 
 func Find() string {
-	return "----------------find-----------------"
+	return "\"----------------find-----------------\""
 }
 
 func Create() string {
-	return "----------------create-----------------"
+	return "\"----------------create-----------------\""
 }
 
 func Update() string {
-	return "----------------update-----------------"
+	return "\"----------------update-----------------\""
 }
 
 func Sakujo() string {
-	return "----------------delete-----------------"
+	return "\"----------------delete-----------------\""
 }
 
 

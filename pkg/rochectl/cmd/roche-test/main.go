@@ -10,7 +10,7 @@ import (
 func NewTestCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
 	testCmd := &cobra.Command{
 		Use:           "test NAME",
-		Short:         "test cobra, viper and so on.",
+		Short:         "to give it a shot cobra, viper and so on in order to development.",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {

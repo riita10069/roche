@@ -84,10 +84,10 @@ func GetPropertyByStructAst(structAst *ast.StructType) ([]string, []string) {
 	return properties, propertiesType
 }
 
-func GetPostSignature(property []string, propertyType []string) []jen.Code {
+func GetPostArgument(property []string, propertyType []string) []jen.Code {
 	var postSignature []jen.Code
 	for i := range property {
-		postSignature = append(postSignature, jen.Id(util.CamelToSnake(property[i])).Id(propertyType[i]))
+		postSignature = append(postSignature, jen.Id(util.SnakeToLowerCamel(util.CamelToSnake(property[i]))).Id(propertyType[i]))
 	}
 	return postSignature
 }

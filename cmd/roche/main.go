@@ -55,7 +55,7 @@ func main() {
 	command.AddCommand(
 		roche_test.NewTestCommand(grapictx, &cnf),
 		roche_gen_scaffold.NewScaffoldCommand(grapictx, &cnf),
-		roche_gen_toml.NewTomlCommand(grapictx),
+		roche_gen_toml.NewTomlCommand(),
 		roche_manifest.NewManifestCommand(grapictx, &cnf),
 		roche_custom_method.NewCustomMethodCommand(grapictx, &cnf),
 		)

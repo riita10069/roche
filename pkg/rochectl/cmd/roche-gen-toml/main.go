@@ -1,7 +1,6 @@
 package roche_gen_toml
 
 import (
-	"github.com/izumin5210/grapi/pkg/grapicmd"
 	"github.com/riita10069/roche/pkg/rochectl/file"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +19,7 @@ ManifestsDir  = "manifests"
 ImageRegistry = "example.io/company"
 `
 
-func NewTomlCommand(ctx *grapicmd.Ctx) *cobra.Command {
+func NewTomlCommand() *cobra.Command {
 	tomlCmd := &cobra.Command{
 		Use:           "toml",
 		Short:         "initialize roche.toml file",

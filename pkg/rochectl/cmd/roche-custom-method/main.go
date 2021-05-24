@@ -7,7 +7,6 @@ import (
 	"github.com/riita10069/roche/pkg/rochectl/config"
 	custom_method "github.com/riita10069/roche/pkg/rochectl/custom-method"
 	"github.com/riita10069/roche/pkg/rochectl/file"
-	"github.com/riita10069/roche/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +33,7 @@ func NewCustomMethodCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comman
 				return errors.New("cannot find interface at " + pbGoFilePath)
 			}
 
-			handlerFilePath := cnf.ServerDir + "/" + util.CamelToSnake(name) + ".go"
+			handlerFilePath := cnf.GetServerFilePath(name)
 			handlerFuncList := ast.FindFunc(handlerFilePath)
 			if handlerFuncList == nil {
 				return errors.New("cannot find function at " + handlerFilePath)

@@ -2,16 +2,12 @@ package gen_scaffold
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/riita10069/roche/pkg/rochectl/config"
-	"github.com/riita10069/roche/pkg/rochectl/file"
-	"github.com/riita10069/roche/pkg/util"
 	"github.com/riita10069/roche/pkg/util/slice"
 	"go/ast"
 )
 
-func GenerateModel(structName string, structAst *ast.StructType, cnf *config.Config) error {
+func GenerateModel(name string, structAst *ast.StructType) *jen.File {
 	f := jen.NewFile("model")
-	defer file.JenniferToFile(f, cnf.InfraModelDir + "/" + util.CamelToSnake(structName) + ".go")
 
 	// create fields of struct
 	var codes []jen.Code
@@ -43,9 +39,9 @@ func GenerateModel(structName string, structAst *ast.StructType, cnf *config.Con
 	}
 
 	// create struct
-	f.Type().Id(structName).Struct(codes...)
+	f.Type().Id(name).Struct(codes...)
 
-	return nil
+	return f
 }
 
 func isBuiltInType(thisType string) (bool, error) {

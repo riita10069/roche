@@ -1,0 +1,11 @@
+package {{.pkgName}}
+
+import (
+    "github.com/google/wire"
+	{{ range .importList }}{{ printf  `"%s"` . -}}{{ end }}
+)
+
+var Set = wire.NewSet(
+	{{ range .providerList }}{{ printf "%s," . -}}{{ end }}
+	{{ range .bindList }}{{ printf "%s," . -}}{{ end }}
+)

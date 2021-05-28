@@ -2,6 +2,7 @@ package roche_gen_scaffold
 
 import (
 	"errors"
+
 	"github.com/izumin5210/grapi/pkg/grapicmd"
 	"github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/rochectl/config"
@@ -17,7 +18,7 @@ func NewScaffoldCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
 		Short:         "make CRUD code following clean architecture.",
 		SilenceErrors: true,
 		SilenceUsage:  true,
-		Aliases: []string{"s", "sca"},
+		Aliases:       []string{"s", "sca"},
 	}
 
 	scaffoldCmd.AddCommand(NewScaffoldAllCommand(ctx, cnf))
@@ -49,15 +50,38 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ pbGoFilePath + " but not found" + name + " struct")
+				return errors.New("found " + pbGoFilePath + " but not found" + name + " struct")
 			}
 			entityFile := gen_scaffold.GenerateEntity(name, targetStruct)
 			file.JenniferToFile(entityFile, cnf.GetEntityFilePath(name))
 			domainRepositoryFile, usecaseFile := gen_scaffold.GenerateUsecase(name, targetStruct)
+
+			usecaseProviderName := "New" + name + "Usecase"
+			usecaseProviderFile, err := gen_scaffold.GenerateProviderFile(cnf.UsecaseDir, usecaseProviderName, nil)
+			if err != nil {
+				return err
+			}
+			file.CreateAndWrite(usecaseProviderFile, cnf.UsecaseDir+"/"+"provider.go")
+
 			file.JenniferToFile(usecaseFile, cnf.GetUsecaseFilePath(name))
 			file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
 			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct)
 			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
+
+			repoProviderName := "New" + name + "Repository"
+			bMap := map[string]*ast.InterfaceSpec{
+				name: &ast.InterfaceSpec{
+					Name:       "I" + name + "Repository",
+					ImportPath: cnf.ModuleName + "/" + cnf.DomainRepoDir,
+				},
+			}
+			// infra/repo層にprovider周りを追加
+			infraRepoProviderFile, err := gen_scaffold.GenerateProviderFile(cnf.RepoDir, repoProviderName, bMap)
+			if err != nil {
+				return err
+			}
+			file.CreateAndWrite(infraRepoProviderFile, cnf.RepoDir+"/"+"provider.go")
+
 			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
 
@@ -66,7 +90,7 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 	}
 	allCmd.PersistentFlags().StringP("pfile", "f", "default", "proto file name")
 
-return allCmd
+	return allCmd
 }
 
 func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
@@ -93,7 +117,7 @@ func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comma
 			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
+				return errors.New("found " + pbGoFilePath + "but not found" + name + " struct")
 			}
 			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))

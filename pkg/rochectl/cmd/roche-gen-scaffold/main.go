@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	autoTable "github.com/hourglasshoro/auto-table/pkg"
-	autoAutoFile "github.com/hourglasshoro/auto-table/pkg/file"
+	autoTableFile "github.com/hourglasshoro/auto-table/pkg/file"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
 	"github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/rochectl/config"
@@ -65,7 +65,7 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 
 			// TODO: Do refactoring
 			generator := autoTable.NewGenerator(ctx.Build.AppName)
-			files, err := autoAutoFile.GetFiles(&ctx.FS, cnf.InfraModelDir)
+			files, err := autoTableFile.GetFiles(&ctx.FS, cnf.InfraModelDir)
 			if err != nil {
 				return xerrors.Errorf("cannot read infra model files: %w", err)
 			}
@@ -75,6 +75,7 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			}
 			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap)
 			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
+			err = generator.WriteFile(&ctx.FS, cnf.MigrationDir, file.CreateAndWrite)
 			return err
 		},
 	}

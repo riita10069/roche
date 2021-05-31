@@ -6,7 +6,7 @@ require (
 	github.com/dave/jennifer v1.4.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/wire v0.5.0
-	github.com/hourglasshoro/auto-table v0.0.0-20210524101845-2b35aaadc890
+	github.com/hourglasshoro/auto-table v0.0.0-20210531092325-1cb330587b01
 	github.com/izumin5210/clig v0.3.1
 	github.com/izumin5210/grapi v0.5.1-0.20191120153727-b4a7b2759ae6
 	github.com/kelseyhightower/envconfig v1.4.0

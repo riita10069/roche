@@ -4,7 +4,6 @@ import (
 	"fmt"
 	. "github.com/dave/jennifer/jen"
 	autoTableSQL "github.com/hourglasshoro/auto-table/pkg/sql"
-	"github.com/naoina/go-stringutil"
 	rocheAst "github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
@@ -213,21 +212,21 @@ func getVarArgumentForScan(property []string, propertyType []string) string {
 }
 
 func FindAllSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
-	return fmt.Sprintf("\"%s\"", sqlMap[stringutil.ToSnakeCase(name)].Record.FindAll)
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.FindAll)
 }
 
 func FindSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
-	return fmt.Sprintf("\"%s\"", sqlMap[stringutil.ToSnakeCase(name)].Record.Find)
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Find)
 }
 
 func CreateSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
-	return fmt.Sprintf("\"%s\"", sqlMap[stringutil.ToSnakeCase(name)].Record.Create)
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Create)
 }
 
 func UpdateSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
-	return fmt.Sprintf("\"%s\"", sqlMap[stringutil.ToSnakeCase(name)].Record.Update)
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Update)
 }
 
 func DeleteSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
-	return fmt.Sprintf("\"%s\"", sqlMap[stringutil.ToSnakeCase(name)].Record.Delete)
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Delete)
 }

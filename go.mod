@@ -10,7 +10,6 @@ require (
 	github.com/izumin5210/clig v0.3.1
 	github.com/izumin5210/grapi v0.5.1-0.20191120153727-b4a7b2759ae6
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/naoina/go-stringutil v0.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/rakyll/statik v0.1.7
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e

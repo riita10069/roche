@@ -6,7 +6,6 @@ import (
 	autoTable "github.com/hourglasshoro/auto-table/pkg"
 	autoAutoFile "github.com/hourglasshoro/auto-table/pkg/file"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
-	"github.com/naoina/go-stringutil"
 	"github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/rochectl/config"
 	"github.com/riita10069/roche/pkg/rochectl/file"
@@ -63,13 +62,15 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
 			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct, ctx.Build.AppName)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
+
+			// TODO: Do refactoring
 			generator := autoTable.NewGenerator(ctx.Build.AppName)
 			files, err := autoAutoFile.GetFiles(&ctx.FS, cnf.InfraModelDir)
 			if err != nil {
 				return xerrors.Errorf("cannot read infra model files: %w", err)
 			}
 			sqlMap, err := generator.CreateSQL(files)
-			if _, ok := sqlMap[stringutil.ToSnakeCase(name)]; !ok {
+			if _, ok := sqlMap[util.CamelToSnake(name)]; !ok {
 				return fmt.Errorf("cannot found %s in sqlMap from autoTable", name)
 			}
 			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap)

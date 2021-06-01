@@ -2,6 +2,9 @@ package roche_gen_scaffold
 
 import (
 	"errors"
+	"fmt"
+	autoTable "github.com/hourglasshoro/auto-table/pkg"
+	autoTableFile "github.com/hourglasshoro/auto-table/pkg/file"
 	"github.com/izumin5210/grapi/pkg/grapicmd"
 	"github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/rochectl/config"
@@ -9,6 +12,7 @@ import (
 	gen_scaffold "github.com/riita10069/roche/pkg/rochectl/gen-scaffold"
 	"github.com/riita10069/roche/pkg/util"
 	"github.com/spf13/cobra"
+	"golang.org/x/xerrors"
 )
 
 func NewScaffoldCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
@@ -17,7 +21,7 @@ func NewScaffoldCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
 		Short:         "make CRUD code following clean architecture.",
 		SilenceErrors: true,
 		SilenceUsage:  true,
-		Aliases: []string{"s", "sca"},
+		Aliases:       []string{"s", "sca"},
 	}
 
 	scaffoldCmd.AddCommand(NewScaffoldAllCommand(ctx, cnf))
@@ -49,24 +53,35 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ pbGoFilePath + " but not found" + name + " struct")
+				return errors.New("found " + pbGoFilePath + " but not found" + name + " struct")
 			}
 			entityFile := gen_scaffold.GenerateEntity(name, targetStruct)
 			file.JenniferToFile(entityFile, cnf.GetEntityFilePath(name))
 			domainRepositoryFile, usecaseFile := gen_scaffold.GenerateUsecase(name, targetStruct)
 			file.JenniferToFile(usecaseFile, cnf.GetUsecaseFilePath(name))
 			file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
-			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct)
-			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
-			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
+			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct, ctx.Build.AppName)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
 
+			// TODO: Do refactoring
+			generator := autoTable.NewGenerator(ctx.Build.AppName)
+			files, err := autoTableFile.GetFiles(&ctx.FS, cnf.InfraModelDir)
+			if err != nil {
+				return xerrors.Errorf("cannot read infra model files: %w", err)
+			}
+			sqlMap, err := generator.CreateSQL(files)
+			if _, ok := sqlMap[util.CamelToSnake(name)]; !ok {
+				return fmt.Errorf("cannot found %s in sqlMap from autoTable", name)
+			}
+			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap)
+			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
+			err = generator.WriteFile(&ctx.FS, cnf.MigrationDir, file.CreateAndWrite)
 			return err
 		},
 	}
 	allCmd.PersistentFlags().StringP("pfile", "f", "default", "proto file name")
 
-return allCmd
+	return allCmd
 }
 
 func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
@@ -93,9 +108,9 @@ func NewScaffoldModelCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comma
 			pbGoFilePath := cnf.GetPbGoFilePath(pfile)
 			targetStruct := ast.FindStruct(name, pbGoFilePath)
 			if targetStruct == nil {
-				return errors.New("found "+ pbGoFilePath + "but not found" + name + " struct")
+				return errors.New("found " + pbGoFilePath + "but not found" + name + " struct")
 			}
-			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
+			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct, ctx.Build.AppName)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
 			return err
 		},

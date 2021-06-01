@@ -5,8 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const content =
-`ModuleName    = "github.com/repository/package"
+const content = `ModuleName    = "github.com/repository/package"
 ServerDir     = "app/server"
 UsecaseDir    = "usecase"
 DomainRepoDir = "domain/repository"
@@ -15,6 +14,7 @@ InfraModelDir = "infra/model"
 RepoDir       = "infra/repository"
 ProtoDir      = "api/proto"
 PbGoDir       = "api"
+MigrationDir  = "migrate"
 ManifestsDir  = "manifests"
 ImageRegistry = "example.io/company"
 `

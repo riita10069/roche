@@ -14,6 +14,7 @@ type Config struct {
 	RepoDir       string
 	ProtoDir      string
 	PbGoDir       string
+	MigrationDir  string
 	ManifestsDir  string
 	ImageRegistry string
 	FindToml      bool

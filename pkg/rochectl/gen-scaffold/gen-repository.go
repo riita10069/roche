@@ -1,13 +1,15 @@
 package gen_scaffold
 
 import (
+	"fmt"
 	. "github.com/dave/jennifer/jen"
+	autoTableSQL "github.com/hourglasshoro/auto-table/pkg/sql"
 	rocheAst "github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/util"
 	"go/ast"
 )
 
-func GenerateRepository(name string, targetStruct *ast.StructType) *File {
+func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[string]*autoTableSQL.SQL) *File {
 	properties, propertiesType := rocheAst.GetPropertyByStructAst(targetStruct)
 	createArgument := rocheAst.GetPostArgument(properties, propertiesType)
 	updateArgument := append(createArgument, Id("id").Int64())
@@ -27,16 +29,16 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 	// NewStructNameUsecase Constructor
 	infraRepoFile.Func().Id("New" + name + "Repository").Params(Id("db").Id("*sql.DB")).Id("repository.I" + name).Block(
 		Return(Op("&").Id(name + "Usecase").Values(Dict{
-			Id("DB"):	Id("db"),
+			Id("DB"): Id("db"),
 		})),
 	)
 
 	// GetList
-	infraRepoFile.Func().Params(Id("r").Id(name)).Id("FindAll").Params().Params(Index().Id("*entity." +name), Error()).Block(
-		Var().Id("entity").Id("entity." + name),
-		Var().Id("entities").Id("[]entity." + name),
+	infraRepoFile.Func().Params(Id("r").Id(name)).Id("FindAll").Params().Params(Index().Id("*entity."+name), Error()).Block(
+		Var().Id("entity").Id("entity."+name),
+		Var().Id("entities").Id("[]entity."+name),
 		List(Id("rows"), Err()).Op(":=").
-			Id("r").Dot("db").Dot("Query").Call(Id(FindAll())),
+			Id("r").Dot("db").Dot("Query").Call(Id(FindAllSQL(name, sqlMap))),
 		Defer().Id("rows").Dot("Close").Call(),
 
 		If(
@@ -48,14 +50,14 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 		For(
 			Id("rows").Dot("Next").Call(),
 		).Block(
-			Var().Params(Id(getVarArgumentForScan(properties, propertiesType) + "id int64")),
+			Var().Params(Id(getVarArgumentForScan(properties, propertiesType)+"id int64")),
 			Err().Op(":=").Id("rows").Dot("Scan").Call(scanArgument...),
 			If(
 				Err().Op("!=").Nil(),
 			).Block(
 				Return(Id("nil"), Err()),
 			),
-			Id("entity").Op(":=").Op("&").Id("entity." + name).Values(dict),
+			Id("entity").Op(":=").Op("&").Id("entity."+name).Values(dict),
 			Id("entities").Op("=").Id("append").Call(Id("entities"), Id("entity")),
 		),
 		Err().Op("=").Id("rows").Dot("Err").Call(),
@@ -69,8 +71,8 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 	)
 
 	// GetByID
-	infraRepoFile.Func().Params(Id("r").Id(name)).Id("Find").Params(Id("id").Int64()).Params(Id("*entity." + name), Error()).Block(
-		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Find())),
+	infraRepoFile.Func().Params(Id("r").Id(name)).Id("Find").Params(Id("id").Int64()).Params(Id("*entity."+name), Error()).Block(
+		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(FindSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -78,8 +80,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 		),
 		Defer().Id("stmt").Dot("Close").Call(),
 
-
-		Var().Params(Id(getVarArgumentForScan(properties, propertiesType) + "id int64")),
+		Var().Params(Id(getVarArgumentForScan(properties, propertiesType)+"id int64")),
 		List(Id("rows"), Id("err")).Op(":=").Id("prep").Dot("QueryRow").Call(Id("1")).Dot("Scan").Call(scanArgument...),
 		If(
 			Err().Op("!=").Nil(),
@@ -88,14 +89,14 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 		),
 		Defer().Id("rows").Dot("Close").Call(),
 
-		Id("entity").Op(":=").Op("&").Id("entity." + name).Values(dict),
+		Id("entity").Op(":=").Op("&").Id("entity."+name).Values(dict),
 
 		Return(Id("entity"), Err()),
 	)
 
 	// Create
-	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Create").Params(createArgument...).Params(Id("*entity." + name), Error()).Block(
-		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Create())),
+	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Create").Params(createArgument...).Params(Id("*entity."+name), Error()).Block(
+		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(CreateSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -117,14 +118,14 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 		//	Return(Id("nil"), Err()),
 		//),
 
-		Id("entity").Op(":=").Op("&").Id("entity." + name).Values(dict),
+		Id("entity").Op(":=").Op("&").Id("entity."+name).Values(dict),
 
 		Return(Id("entity"), Err()),
 	)
 
 	// Update
-	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Update").Params(updateArgument...).Params(Id("*entity." +name), Error()).Block(
-		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Update())),
+	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Update").Params(updateArgument...).Params(Id("*entity."+name), Error()).Block(
+		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(UpdateSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -146,14 +147,14 @@ func GenerateRepository(name string, targetStruct *ast.StructType) *File {
 		//	Return(Id("nil"), Err()),
 		//),
 
-		Id("entity").Op(":=").Op("&").Id("entity." + name).Values(dict),
+		Id("entity").Op(":=").Op("&").Id("entity."+name).Values(dict),
 
 		Return(Id("entity"), Err()),
 	)
 
 	// Delete
 	infraRepoFile.Func().Params(Id("u").Id(name)).Id("Delete").Params(Id("id").Int64()).Params(Error()).Block(
-		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(Sakujo())),
+		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("db").Dot("Prepare").Call(Id(DeleteSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(
@@ -184,7 +185,6 @@ func propertyToExecForUpdate(properties []string) []Code {
 	return execForUpdate
 }
 
-
 func propertyToExecForCreate(properties []string) []Code {
 	var execForCreate []Code
 	for _, v := range properties {
@@ -197,7 +197,7 @@ func propertyToScan(properties []string) []Code {
 	var scanSignature []Code
 	scanSignature = append(scanSignature, Id("&id"))
 	for _, v := range properties {
-		scanSignature = append(scanSignature, Id("&" + util.SnakeToLowerCamel(util.CamelToSnake(v))))
+		scanSignature = append(scanSignature, Id("&"+util.SnakeToLowerCamel(util.CamelToSnake(v))))
 	}
 	return scanSignature
 }
@@ -211,25 +211,22 @@ func getVarArgumentForScan(property []string, propertyType []string) string {
 	return postSignature
 }
 
-func FindAll() string {
-	return "\"----------------find all-----------------\""
+func FindAllSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.FindAll)
 }
 
-func Find() string {
-	return "\"----------------find-----------------\""
+func FindSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Find)
 }
 
-func Create() string {
-	return "\"----------------create-----------------\""
+func CreateSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Create)
 }
 
-func Update() string {
-	return "\"----------------update-----------------\""
+func UpdateSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Update)
 }
 
-func Sakujo() string {
-	return "\"----------------delete-----------------\""
+func DeleteSQL(name string, sqlMap map[string]*autoTableSQL.SQL) string {
+	return fmt.Sprintf("\"%s\"", sqlMap[util.CamelToSnake(name)].Record.Delete)
 }
-
-
-

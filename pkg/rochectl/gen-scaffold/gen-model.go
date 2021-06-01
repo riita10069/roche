@@ -6,8 +6,10 @@ import (
 	"go/ast"
 )
 
-func GenerateModel(name string, structAst *ast.StructType) *jen.File {
+func GenerateModel(name string, structAst *ast.StructType, marker string) *jen.File {
 	f := jen.NewFile("model")
+
+	f.Commentf("+%s", marker)
 
 	// create fields of struct
 	var codes []jen.Code

@@ -6,8 +6,8 @@ roche is a web framework optimized for microservice architecture using go.
 It prioritizes schema-first and quick development over lightweight.
 It is currently in the development concept stage and should not be used in production.
 
-It is inspired by Ruby on Rails, grapi and protoeasy.
-And roche relies on grapi heavily.
+It is inspired by Ruby on Rails, [https://github.com/izumin5210/grapi][grapi] and protoeasy.
+And roche relies on [https://github.com/izumin5210/grapi][grapi] heavily.
 
 ## Roche is named after the Roche limit and Roche radius.
 
@@ -17,6 +17,8 @@ The Roche radius is the size of the region where the mutual gravity of two celes
 In a microservices architecture, each service pulls together as if it has universal gravitation. However, if they are too close together (i.e., too dense), they will break, hence the name.
 
 ## Getting Started
+### protobuf
+You have to install [https://github.com/protocolbuffers/protobuf][protobuf]
 
 ### Framework
 
@@ -39,6 +41,8 @@ Generate .proto and server
 
 `roche scaffold all NAME`
 Generate CRUD template for NAME service
+You can also generate a single file.
+By using (domain, model, repo, migrate) instead of all.
 
 `roche manifest app APPNAME`
 Generate k8s manifest template, APPNAME is app name.
@@ -69,3 +73,7 @@ func Run() error {
 - <a href="https://github.com/riita10069">@riita10069</a>
 - <a href="https://github.com/hourglasshoro">@hourglasshoro</a>
 - <a href="https://github.com/ffjlabo">@ffjlabo</a>
+
+[protobuf]: https://github.com/protocolbuffers/protobuf
+
+[grapi]: https://github.com/izumin5210/grapi

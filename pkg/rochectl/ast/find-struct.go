@@ -70,7 +70,7 @@ func GetPropertyByStructAst(structAst *ast.StructType) ([]string, []string) {
 				if xIdent.Name == "protoimpl" {
 					continue
 				}
-				properties = append(properties, nameIdent.Name)
+				properties = append(properties, util.SnakeToLowerCamel(nameIdent.Name))
 				propertiesType = append(propertiesType, xIdent.Name)
 
 			// 組み込みまたは同パッケージ内の型を利用している場合

@@ -73,7 +73,7 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			if _, ok := sqlMap[util.CamelToSnake(name)]; !ok {
 				return fmt.Errorf("cannot found %s in sqlMap from autoTable", name)
 			}
-			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap)
+			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap, cnf.ModuleName)
 			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
 			err = generator.WriteFile(&ctx.FS, cnf.MigrationDir, file.CreateAndWrite)
 			return err
@@ -121,7 +121,7 @@ func NewScaffoldDomainCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Comm
 func generateEntityAndDomainRepositoryFile(name string, targetStruct *goAst.StructType, cnf *config.Config) {
 	entityFile := gen_scaffold.GenerateEntity(name, targetStruct)
 	file.JenniferToFile(entityFile, cnf.GetEntityFilePath(name))
-	domainRepositoryFile, usecaseFile := gen_scaffold.GenerateUsecase(name, targetStruct)
+	domainRepositoryFile, usecaseFile := gen_scaffold.GenerateUsecase(name, targetStruct, cnf.ModuleName)
 	file.JenniferToFile(usecaseFile, cnf.GetUsecaseFilePath(name))
 	file.JenniferToFile(domainRepositoryFile, cnf.GetDomainRepoFilePath(name))
 }
@@ -163,7 +163,7 @@ func NewScaffoldRepositoryCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.
 			if _, ok := sqlMap[util.CamelToSnake(name)]; !ok {
 				return fmt.Errorf("cannot found %s in sqlMap from autoTable", name)
 			}
-			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap)
+			infraRepositoryFile := gen_scaffold.GenerateRepository(name, targetStruct, sqlMap, cnf.ModuleName)
 			file.JenniferToFile(infraRepositoryFile, cnf.GetInfraRepoFilePath(name))
 			return err
 		},

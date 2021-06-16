@@ -129,7 +129,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	)
 
 	// Update
-	infraRepoFile.Func().Params(Id("u").Id(repository)).Id("Update").Params(Id("id").Int64(), Id("e").Id("*entity.Enterprise")).Params(Id("*entity."+name), Error()).Block(
+	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Update").Params(Id("id").Int64(), Id("e").Id("*entity.Enterprise")).Params(Id("*entity."+name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("DB").Dot("Prepare").Call(Id(UpdateSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),

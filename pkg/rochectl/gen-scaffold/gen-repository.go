@@ -25,7 +25,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	infraRepoFile.ImportName("database/sql", "sql")
 
 	var repository = name + "Repository"
-	infraRepoFile.Type().Id(name).Struct(
+	infraRepoFile.Type().Id(name + "Repository").Struct(
 		Id("DB").Id("*sql.DB"),
 	)
 
@@ -74,7 +74,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	)
 
 	// GetByID
-	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Find").Params(Id("id").Int64()).Params(Id("*entity."+name), Error()).Block(
+	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("GetByID").Params(Id("id").Int64()).Params(Id("*entity."+name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("DB").Dot("Prepare").Call(Id(FindSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
@@ -209,7 +209,7 @@ func propertyToScan(properties []string) []Code {
 func getVarArgumentForScan(property []string, propertyType []string) string {
 	var postSignature string
 	for i := range property {
-		postSignature += util.CamelToSnake(util.SnakeToLowerCamel(util.CamelToSnake(property[i]))) + " " + (propertyType[i])
+		postSignature += util.SnakeToLowerCamel(util.CamelToSnake(property[i])) + " " + (propertyType[i])
 		postSignature += ";"
 	}
 	return postSignature

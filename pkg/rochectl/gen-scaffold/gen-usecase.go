@@ -31,12 +31,12 @@ func GenerateUsecase(name string, targetStruct *ast.StructType, moduleName strin
 	usecaseFile.ImportName(moduleName + "/domain/entity", "entity")
 	usecaseFile.ImportName(moduleName + "/domain/repository", "repository")
 
-	usecaseFile.Type().Id(name).Struct(
-		Id(name + "Repo").Id("repository.I" + Usecase),
+	usecaseFile.Type().Id(name + "Usecase").Struct(
+		Id(name + "Repo").Id("repository.I" + name + "Repostiroy"),
 	)
 
 	// NewStructNameUsecase Constructor
-	usecaseFile.Func().Id("New" + Usecase).Params(Id("repo").Id("repository.I" + name + "Repository")).Id(name + "Usecase").Block(
+	usecaseFile.Func().Id("New" + Usecase).Params(Id("repo").Id("repository.I" + name + "Repository")).Id("*" +name + "Usecase").Block(
 		Return(Op("&").Id(Usecase).Values(Dict{
 			Id(name + "Repo"): Id("repo"),
 		})),

@@ -156,7 +156,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	)
 
 	// Delete
-	infraRepoFile.Func().Params(Id("u").Id(repository)).Id("Delete").Params(Id("id").Int64()).Params(Error()).Block(
+	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Delete").Params(Id("id").Int64()).Params(Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("DB").Dot("Prepare").Call(Id(DeleteSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),

@@ -38,7 +38,6 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 
 	// GetList
 	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("GetList").Params().Params(Index().Id("*entity."+name), Error()).Block(
-		Var().Id("e").Id("*entity."+name),
 		Var().Id("entities").Id("[]*entity."+name),
 		List(Id("rows"), Err()).Op(":=").
 			Id("r").Dot("DB").Dot("Query").Call(Id(FindAllSQL(name, sqlMap))),

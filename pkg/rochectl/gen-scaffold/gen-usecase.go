@@ -22,9 +22,9 @@ func GenerateUsecase(name string, targetStruct *ast.StructType, moduleName strin
 	repositoryFile.ImportName(moduleName + "/domain/entity", "entity")
 	repositoryFile.Type().Id("I" + name + "Repository").Interface(
 		Id("GetList").Params().Params(Index().Id("*entity").Dot(name), Error()),
-		Id("GetByID").Params(Id("id").Int64()).Params(Id("*entity").Dot("*" +name), Error()),
+		Id("GetByID").Params(Id("id").Int64()).Params(Id("*entity").Dot(name), Error()),
 		Id("Create").Params(Id("*entity").Dot(name)).Params(Id("*entity").Dot(name), Error()),
-		Id("Update").Params(Int64(), Id("*entity").Dot(name)).Params(Id("*" +name), Error()),
+		Id("Update").Params(Int64(), Id("*entity").Dot(name)).Params(Id("*entity." + name), Error()),
 		Id("Delete").Params(Int64()).Error(),
 	)
 

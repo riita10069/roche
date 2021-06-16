@@ -32,7 +32,7 @@ func GenerateUsecase(name string, targetStruct *ast.StructType, moduleName strin
 	usecaseFile.ImportName(moduleName + "/domain/repository", "repository")
 
 	usecaseFile.Type().Id(name + "Usecase").Struct(
-		Id(name + "Repo").Id("repository.I" + name + "Repostiroy"),
+		Id(name + "Repo").Id("repository.I" + name + "Repository"),
 	)
 
 	// NewStructNameUsecase Constructor

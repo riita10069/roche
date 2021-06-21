@@ -3,16 +3,16 @@ package di
 
 import (
     "github.com/google/wire"
-{{ range .importList }}
-    "{{ . }}"
-{{ end }}
+    {{ range .importList }}
+    {{- printf `"%s"` . }}
+    {{ end }}
 )
 
 func initServer() interface{} {
 	wire.Build(
-{{ range .providerSetList }}
-    {{ . }},
-{{ end }}
+    {{ range .providerSetList }}
+    {{- . }},
+    {{ end }}
 	)
 
 	return nil

@@ -82,6 +82,16 @@ func NewScaffoldAllCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command
 			}
 			file.CreateAndWrite(infraRepoProviderFile, cnf.RepoDir+"/"+"provider.go")
 
+			importPathList := []string{
+				cnf.ModuleName + "/" + cnf.RepoDir,
+				cnf.ModuleName + "/" + cnf.UsecaseDir,
+			}
+			wireFile, err := gen_scaffold.GenerateWireFile(cnf.DiDir, importPathList)
+			if err != nil {
+				return err
+			}
+			file.CreateAndWrite(wireFile, cnf.DiDir+"/"+"wire.go")
+
 			infraModelFile := gen_scaffold.GenerateModel(name, targetStruct)
 			file.JenniferToFile(infraModelFile, cnf.GetInfraModelFilePath(name))
 

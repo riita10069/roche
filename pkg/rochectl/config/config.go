@@ -7,6 +7,7 @@ import (
 type Config struct {
 	ModuleName    string
 	ServerDir     string
+	DiDir         string
 	UsecaseDir    string
 	DomainRepoDir string
 	EntityDir     string

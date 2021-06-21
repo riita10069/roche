@@ -1,5 +1,6 @@
 ModuleName    = "github.com/riita10069/roche"
 ServerDir     = "generated/server"
+DiDir         = "generated/app/di"
 UsecaseDir    = "generated/usecase"
 DomainRepoDir = "generated/domain/repository"
 EntityDir     = "generated/domain/entity"

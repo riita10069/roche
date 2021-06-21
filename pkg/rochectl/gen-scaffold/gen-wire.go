@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"go/format"
 	"os"
 	"strings"
 	"text/template"
@@ -25,7 +26,7 @@ var (
 )
 
 // GenerateWireContent generate the content of wire.go
-func GenerateWireFile(wireDir string, importPath string) (string, error) {
+func GenerateWireFile(wireDir string, importPathList []string) (string, error) {
 	importList := []string{}
 	providerSetList := []string{}
 
@@ -42,8 +43,10 @@ func GenerateWireFile(wireDir string, importPath string) (string, error) {
 	}
 
 	// importPathの重複確認
-	if ok, _ := slice.Contains(importPath, importList); !ok {
-		importList = append(importList, importPath)
+	for _, importPath := range importPathList {
+		if ok, _ := slice.Contains(importPath, importList); !ok {
+			importList = append(importList, importPath)
+		}
 	}
 
 	// importPathからproviderSetListを作成
@@ -71,7 +74,15 @@ func GenerateWireFile(wireDir string, importPath string) (string, error) {
 		return "", err
 	}
 
-	return buf.String(), nil
+	formatted, err := format.Source(buf.Bytes())
+	fmt.Println(string(buf.Bytes()))
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(string(formatted))
+
+	return string(formatted), nil
 }
 
 // GenerateProviderContent generate the content of provider.go
@@ -152,5 +163,10 @@ func GenerateProviderFile(providerDir string, providerName string, bindMap map[s
 		return "", err
 	}
 
-	return buf.String(), nil
+	formatted, err := format.Source(buf.Bytes())
+	if err != nil {
+		return "", err
+	}
+
+	return string(formatted), nil
 }

@@ -7,6 +7,7 @@ import (
 
 const content = `ModuleName    = "github.com/repository/package"
 ServerDir     = "app/server"
+DiDir         = "app/di"
 UsecaseDir    = "usecase"
 DomainRepoDir = "domain/repository"
 EntityDir     = "domain/entity"

@@ -15,6 +15,7 @@ InfraModelDir = "infra/model"
 RepoDir       = "infra/repository"
 ProtoDir      = "api/proto"
 PbGoDir       = "api"
+MigrationDir  = "migrate"
 ManifestsDir  = "manifests"
 ImageRegistry = "example.io/company"
 `

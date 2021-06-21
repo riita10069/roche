@@ -17,8 +17,8 @@ func makeDirectory (filename string) {
 	filepath := strings.Join(paths, "/")
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		defaultUmask := syscall.Umask(0)
-		os.MkdirAll(filepath, 0777)
-		os.Chmod(filepath, 0777)
+		os.MkdirAll(filepath, 0755)
+		os.Chmod(filepath, 0755)
 		syscall.Umask(defaultUmask)
 	}
 	fmt.Println("Execute Make Directory")

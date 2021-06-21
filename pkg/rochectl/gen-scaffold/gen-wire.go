@@ -75,12 +75,9 @@ func GenerateWireFile(wireDir string, importPathList []string) (string, error) {
 	}
 
 	formatted, err := format.Source(buf.Bytes())
-	fmt.Println(string(buf.Bytes()))
 	if err != nil {
 		return "", err
 	}
-
-	fmt.Println(string(formatted))
 
 	return string(formatted), nil
 }

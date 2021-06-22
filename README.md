@@ -29,6 +29,7 @@ You have to install [https://github.com/protocolbuffers/protobuf][protobuf]
 `go get github.com/riita10069/roche/cmd/roche`
 
 ## Getting Started
+Requires go version 1.16 or higher
 
 `roche init .`
 To Initialize project like create-react-app

@@ -2,7 +2,9 @@ package {{.pkgName}}
 
 import (
     "github.com/google/wire"
-	{{ range .importList }}{{ printf  `"%s"` . }}{{ end }}
+	{{ range .importList }}
+    {{- printf `"%s"` . }}
+    {{ end }}
 )
 
 var Set = wire.NewSet(

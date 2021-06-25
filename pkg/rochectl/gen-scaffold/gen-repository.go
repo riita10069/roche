@@ -2,11 +2,12 @@ package gen_scaffold
 
 import (
 	"fmt"
+	"go/ast"
+
 	. "github.com/dave/jennifer/jen"
 	autoTableSQL "github.com/hourglasshoro/auto-table/pkg/sql"
 	rocheAst "github.com/riita10069/roche/pkg/rochectl/ast"
 	"github.com/riita10069/roche/pkg/util"
-	"go/ast"
 )
 
 func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[string]*autoTableSQL.SQL, moduleName string) *File {
@@ -30,7 +31,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	)
 
 	// NewStructNameUsecase Constructor
-	infraRepoFile.Func().Id("New" + name + "Repository").Params(Id("db").Id("*sql.DB")).Id("repository." + repository).Block(
+	infraRepoFile.Func().Id("New" + name + "Repository").Params(Id("db").Id("*sql.DB")).Id("*" + repository).Block(
 		Return(Op("&").Id(repository).Values(Dict{
 			Id("DB"): Id("db"),
 		})),
@@ -52,7 +53,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 		For(
 			Id("rows").Dot("Next").Call(),
 		).Block(
-			Var().Params(Id(getVarArgumentForScan(properties, propertiesType) + "id int64")),
+			Var().Params(Id(getVarArgumentForScan(properties, propertiesType)+"id int64")),
 			Err().Op("=").Id("rows").Dot("Scan").Call(scanArgument...),
 			If(
 				Err().Op("!=").Nil(),
@@ -89,9 +90,9 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 		).Block(
 			If(
 				Id("err").Op("==").Id("sql.ErrNoRows").Block(
-					Return(Id("&entity." + name + "{}"), Nil()),
-					),
+					Return(Id("&entity."+name+"{}"), Nil()),
 				),
+			),
 			Return(Id("nil"), Err()),
 		),
 
@@ -101,7 +102,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 	)
 
 	// Create
-	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Create").Params(Id("e").Id("*entity." + name)).Params(Id("*entity."+name), Error()).Block(
+	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Create").Params(Id("e").Id("*entity."+name)).Params(Id("*entity."+name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("DB").Dot("Prepare").Call(Id(CreateSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
@@ -124,12 +125,11 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 		//	Return(Id("nil"), Err()),
 		//),
 
-
 		Return(Id("e"), Err()),
 	)
 
 	// Update
-	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Update").Params(Id("id").Int64(), Id("e").Id("*entity." + name)).Params(Id("*entity." + name), Error()).Block(
+	infraRepoFile.Func().Params(Id("r").Id(repository)).Id("Update").Params(Id("id").Int64(), Id("e").Id("*entity."+name)).Params(Id("*entity."+name), Error()).Block(
 		List(Id("stmt"), Id("err")).Op(":=").Id("r").Dot("DB").Dot("Prepare").Call(Id(UpdateSQL(name, sqlMap))),
 		If(
 			Err().Op("!=").Nil(),
@@ -183,7 +183,7 @@ func propertyToExecForUpdate(properties []string, object string) []Code {
 	var execForUpdate []Code
 	execForUpdate = append(execForUpdate, Id("id"))
 	for _, v := range properties {
-		execForUpdate = append(execForUpdate, Id(object + "." + util.SnakeToUpperCamel(util.CamelToSnake(v))))
+		execForUpdate = append(execForUpdate, Id(object+"."+util.SnakeToUpperCamel(util.CamelToSnake(v))))
 	}
 	return execForUpdate
 }
@@ -191,7 +191,7 @@ func propertyToExecForUpdate(properties []string, object string) []Code {
 func propertyToExecForCreate(properties []string, object string) []Code {
 	var execForCreate []Code
 	for _, v := range properties {
-		execForCreate = append(execForCreate, Id(object + "." + util.SnakeToUpperCamel(util.CamelToSnake(v))))
+		execForCreate = append(execForCreate, Id(object+"."+util.SnakeToUpperCamel(util.CamelToSnake(v))))
 	}
 	return execForCreate
 }

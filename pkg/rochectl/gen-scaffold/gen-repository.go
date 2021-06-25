@@ -84,7 +84,7 @@ func GenerateRepository(name string, targetStruct *ast.StructType, sqlMap map[st
 		Defer().Id("stmt").Dot("Close").Call(),
 
 		Var().Params(Id(getVarArgumentForScan(properties, propertiesType))),
-		Id("err").Op(":=").Id("stmt").Dot("QueryRow").Call(Id("1")).Dot("Scan").Call(scanArgument...),
+		Id("err").Op("=").Id("stmt").Dot("QueryRow").Call(Id("1")).Dot("Scan").Call(scanArgument...),
 		If(
 			Err().Op("!=").Nil(),
 		).Block(

@@ -37,9 +37,6 @@ func GenerateWireFile(wireDir string, importPathList []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-
-		// "github.com/google/wire"を無視
-		importList = importList[1:]
 	}
 
 	// importPathの重複確認
@@ -53,6 +50,10 @@ func GenerateWireFile(wireDir string, importPathList []string) (string, error) {
 	for _, path := range importList {
 		paths := strings.Split(path, "/")
 		pkgName := paths[len(paths)-1]
+
+		if pkgName == "wire" {
+			continue
+		}
 
 		providerSetList = append(providerSetList, pkgName+"."+"Set")
 	}

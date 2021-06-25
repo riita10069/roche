@@ -28,7 +28,6 @@ func NewScaffoldCommand(ctx *grapicmd.Ctx, cnf *config.Config) *cobra.Command {
 	}
 
 	scaffoldCmd.AddCommand(NewScaffoldAllCommand(ctx, cnf))
-	scaffoldCmd.AddCommand(NewScaffoldModelCommand(ctx, cnf))
 	scaffoldCmd.AddCommand(NewScaffoldDomainCommand(ctx, cnf))
 	scaffoldCmd.AddCommand(NewScaffoldRepositoryCommand(ctx, cnf))
 	scaffoldCmd.AddCommand(NewScaffoldMigrationCommand(ctx, cnf))

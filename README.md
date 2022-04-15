@@ -26,7 +26,7 @@ You have to install [https://github.com/protocolbuffers/protobuf][protobuf]
 
 ### CLI tool
 
-`go get github.com/riita10069/roche/cmd/roche`
+`go install github.com/riita10069/roche/cmd/roche@latest`
 
 ## Getting Started
 Requires go version 1.16 or higher
